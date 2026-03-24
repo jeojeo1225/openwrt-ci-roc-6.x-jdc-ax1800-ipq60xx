@@ -37,8 +37,11 @@ git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/luci/the
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config
 # 3. 克隆 HomeProxy与SINGBOX 源码,建议也补上最新的 golang 环境
 git clone --depth=1 https://github.com/immortalwrt/homeproxy package/homeproxy
-git clone --depth=1 https://github.com/sagernet/openwrt-sing-box package/sing-box
-git clone --depth=1 https://github.com/sbwml/packages_lang_golang package/golang
+# 修正后的（强制放回 feeds 目录，并确保目录存在）
+mkdir -p feeds/packages/net/sing-box
+git clone --depth=1 https://github.com/sagernet/openwrt-sing-box feeds/packages/net/sing-box
+mkdir -p feeds/packages/lang/golang
+git clone --depth=1 https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
 # 4. 雅典娜LED控制
 git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led
 chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
