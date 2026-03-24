@@ -1,5 +1,7 @@
 # 修改默认IP & 固件名称 & 编译署名和时间
 sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
+# --- 补上这一行，设定主机名为 LibWrt ---
+sed -i "s/hostname='.*'/hostname='LibWrt'/g" package/base-files/files/bin/config_generate
 # --- 统一署名修改 (稳健且带链接) ---
 JS_FILE="feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
 if [ -f "$JS_FILE" ]; then
