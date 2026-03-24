@@ -113,7 +113,7 @@ jobs:
         make defconfig
         make download -j$(nproc)
 
-    - name: Compile Firmware(开始编译固件)
+    - name: Compile Firmware(开始编译固件)如果你用 $(nproc)暴内存的话删掉make -j$(nproc) || 
       id: compile
       run: |
         cd $OPENWRT_PATH
