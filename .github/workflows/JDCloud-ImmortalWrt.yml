@@ -10,7 +10,7 @@ env:
   REPO_URL: https://github.com/laipeng668/immortalwrt.git
   REPO_BRANCH: master
   CONFIG_FILE: configs/JDCloud.config
-  GENERAL_CONFIG_FILE: configs/General.config
+
   DIY_SCRIPT: scripts/Roc-script.sh
   CLASH_KERNEL: amd64
   FIRMWARE_TAG: JDCloud
@@ -62,8 +62,10 @@ jobs:
 
     - name: Generate Variables(生成变量)
       run: |
+        # 确保这里使用的是已经合体后的 $CONFIG_FILE
         cp $CONFIG_FILE $OPENWRT_PATH/.config
         cd $OPENWRT_PATH
+        # 执行 defconfig 展开完整的配置树，以便后续 grep 提取变量
         make defconfig > /dev/null 2>&1
         SOURCE_REPO="$(echo $REPO_URL | awk -F '/' '{print $(NF)}')"
         echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
@@ -105,7 +107,8 @@ jobs:
 
     - name: Download DL Package(下载DL软件包)
       run: |
-        cat $CONFIG_FILE $GENERAL_CONFIG_FILE > $OPENWRT_PATH/.config
+        # 直接拷贝合并后的唯一配置文件
+        cp $CONFIG_FILE $OPENWRT_PATH/.config
         cd $OPENWRT_PATH
         make defconfig
         make download -j$(nproc)
