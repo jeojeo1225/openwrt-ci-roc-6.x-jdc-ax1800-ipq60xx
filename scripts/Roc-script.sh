@@ -1,18 +1,21 @@
 # 修改默认IP & 固件名称 & 编译署名和时间
 sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
-sed -i "s/hostname='.*'/hostname='Roc'/g" package/base-files/files/bin/config_generate
-sed -i "s#_('Firmware Version'), (L\.isObject(boardinfo\.release) ? boardinfo\.release\.description + ' / ' : '') + (luciversion || ''),# \
-            _('Firmware Version'),\n \
-            E('span', {}, [\n \
-                (L.isObject(boardinfo.release)\n \
-                ? boardinfo.release.description + ' / '\n \
-                : '') + (luciversion || '') + ' / ',\n \
-            E('a', {\n \
-                href: 'https://github.com/laipeng668/openwrt-ci-roc/releases',\n \
-                target: '_blank',\n \
-                rel: 'noopener noreferrer'\n \
-                }, [ 'Built by Roc $(date "+%Y-%m-%d %H:%M:%S")' ])\n \
-            ]),#" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+# --- 统一署名修改 (稳健且带链接) ---
+JS_FILE="feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
+if [ -f "$JS_FILE" ]; then
+    # 这里的正则匹配更精准，且使用了单行替换防止 Actions 报错
+    sed -i "s#_('Firmware Version'), (L\.isObject(boardinfo\.release) ? boardinfo\.release\.description + ' / ' : '') + (luciversion || ''),#_('Firmware Version'), (L.isObject(boardinfo.release) ? boardinfo.release.description + ' / ' : '') + (luciversion || '') + ' / ' + E('a', { href: 'https://github.com/laipeng668/openwrt-ci-roc/releases', target: '_blank', rel: 'noopener noreferrer' }, [ 'Built by Roc $(date "+%Y-%m-%d")' ]),#" "$JS_FILE"
+fi
+# --- 闪存优化：增加文件存在性检查 ---
+RC_LOCAL="package/base-files/files/etc/rc.local"
+if [ -f "$RC_LOCAL" ]; then
+    sed -i '/exit 0/i echo y > /sys/kernel/mm/lru_gen/enabled' "$RC_LOCAL"
+    sed -i '/exit 0/i mount -o remount,noatime,nodiratime /' "$RC_LOCAL"
+else
+    # 如果文件不存在，直接创建并写入
+    echo -e "#!/bin/sh\necho y > /sys/kernel/mm/lru_gen/enabled\nmount -o remount,noatime,nodiratime /\nexit 0" > "$RC_LOCAL"
+    chmod +x "$RC_LOCAL"
+fi
 
 # 调整NSS驱动q6_region内存区域预留大小（ipq6018.dtsi默认预留85MB，ipq6018-512m.dtsi默认预留55MB，带WiFi必须至少预留54MB，以下分别是改成预留16MB、32MB、64MB和96MB）
 # sed -i 's/reg = <0x0 0x4ab00000 0x0 0x[0-9a-f]\+>/reg = <0x0 0x4ab00000 0x0 0x01000000>/' target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq6018-512m.dtsi
@@ -40,8 +43,16 @@ git clone --depth=1 https://github.com/immortalwrt/homeproxy package/homeproxy
 # 4. 雅典娜LED控制
 git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led
 chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
+# 5. 系统内核调优 (sysctl.conf)
+echo "vm.min_free_kbytes=16384" >> package/base-files/files/etc/sysctl.conf
+echo "vm.swappiness=10" >> package/base-files/files/etc/sysctl.conf
+echo "net.core.netdev_max_backlog=10000" >> package/base-files/files/etc/sysctl.conf
+echo "kernel.printk = 0 0 0 0" >> package/base-files/files/etc/sysctl.conf
 
-# 5. 更新并安装 Feeds
-# 注意：sing-box 和 golang 会通过 feeds 自动下载，无需手动 git clone
-./scripts/feeds update -a
-./scripts/feeds install -a
+# 6. 日志精简 (防止 eMMC 损耗)
+sed -i 's/option log_type.*/option log_type "circular"/' package/base-files/files/etc/config/system
+sed -i 's/option log_size.*/option log_size "64"/' package/base-files/files/etc/config/system
+# 7. 强制 CPU Performance 模式 (如果配置文件存在)
+if [ -f "package/base-files/files/etc/config/cpufreq" ]; then
+    sed -i 's/governor=".*"/governor="performance"/g' package/base-files/files/etc/config/cpufreq
+fi
