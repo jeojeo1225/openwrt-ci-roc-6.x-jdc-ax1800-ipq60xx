@@ -1,10 +1,5 @@
 # 🚀 LibWrt — 深度定制版 (基于 ImmortalWrt / IPQ60xx)
 
-<div align="center">
-    <img src="https://img.shields.io/github/v/release/laipeng668/openwrt-ci-roc?include_prereleases&style=flat-square" alt="Release Status">
-    <img src="https://img.shields.io/github/last-commit/laipeng668/openwrt-ci-roc?style=flat-square" alt="Last Commit">
-</div>
-
 ## ⚖️ 特别提示
 - **免责声明**：本人不对使用本固件造成的任何硬件损坏或数据丢失负责。
 - **合规使用**：本固件仅限技术交流，严禁用于商业用途。请自觉遵守国家相关法律规定。
