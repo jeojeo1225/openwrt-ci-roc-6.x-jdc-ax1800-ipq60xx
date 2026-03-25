@@ -1,26 +1,47 @@
+# 🚀 LibWrt — 高效云编译 (IPQ60xx 专项)
+
 <div align="center">
-<h1>OpenWrt — 云编译</h1>
+    <img src="https://img.shields.io/github/v/release/laipeng668/openwrt-ci-roc?include_prereleases&style=flat-square" alt="Release Status">
+    <img src="https://img.shields.io/github/last-commit/laipeng668/openwrt-ci-roc?style=flat-square" alt="Last Commit">
+    <img src="https://img.shields.io/github/actions/workflow/status/laipeng668/openwrt-ci-roc/build-openwrt.yml?style=flat-square" alt="Build Status">
+</div>
 
-## 特别提示
+## ⚖️ 特别提示
 
-- **本人不对任何人因使用本固件所遭受的任何理论或实际的损失承担责任！**
+- **免责声明**：本人不对任何人因使用本固件所遭受的任何理论或实际损失（包括但不限于硬件损坏、数据丢失）承担责任。
+- **合规使用**：本固件仅限技术交流与学习，禁止用于任何商业用途。请使用者务必严格遵守国家互联网使用相关法律规定。
 
-- **本固件禁止用于任何商业用途，请务必严格遵守国家互联网使用相关法律规定！**
+## 🛠️ 项目特性
 
-## 项目说明
-- 默认管理地址：**`192.168.2.1`** 默认用户：**`root`** 默认密码：**`none`**
-- [云编译来源](https://github.com/haiibo/OpenWrt) [视频教程](https://www.youtube.com/watch?v=6j4ofS0GT38) [问题合集](https://github.com/LiBwrt/openwrt-6.x/issues)
+本方案深度适配 **Qualcommax (IPQ60xx)** 平台，采用 **ImmortalWrt** 上游源码，并针对性能与稳定性进行了专项调优：
 
-## 仓库说明
-- 本人 Fork 的仓库：[ImmortalWrt](https://github.com/laipeng668/immortalwrt) [LibWrt](https://github.com/laipeng668/openwrt-6.x)，内容大体一致。
-- `ImmortalWrt` 和 `LibWrt` 分别通过 rebase 和 merge 进行更新，相互印证。
-- `LibWrt` 因为 DTS 更为丰富，所以支持更多的机型。
+- **核心方案**：坚持使用 **上游官方 Sing-box** 源码方案，拒绝臃肿，确保内核级的纯净与稳定。
+- **环境驱动**：集成 [sbwml/packages_lang_golang](https://github.com/sbwml/packages_lang_golang) 提供 **Go 1.23+** 高版本编译器，完美支持新版插件。
+- **内存与性能调优**：
+    - **NSS 预留优化**：针对 IPQ6018 调整 `q6_region` 内存预留至 **64MB**，兼顾 WiFi 性能与系统可用内存。
+    - **闪存寿命保护**：强制开启 `LRU_GEN` 内存回收，并将系统日志精简为 **64KB** 循环存储，减少 eMMC 损耗。
+    - **激进调度**：默认 CPU 调频器设为 `performance` 模式，确保高负载下响应迅速。
+- **顶级编译环境**：运行于 GitHub Actions 增强型服务器（**4核 AMD EPYC 7763 / 16GB RAM**），彻底告别 OOM 内存溢出。
 
-## 定制固件
-- 首先要登录 Github 账号，然后 Fork 此项目到你自己的 Github 仓库。
-- 修改 `configs` 目录对应的文件添加或删除插件，或者上传自己的 `xx.config` 配置文件。
-- 不需要的软件包请把 `y` 改成 `n` ，仅在前面添加 `#` 是无效的。
-- 插件对应名称及功能请参考恩山网友帖子：[OpenWrt软件包全量解释](https://www.right.com.cn/FORUM/forum.php?mod=viewthread&tid=8384897)。
-- 如需修改默认 IP、添加或删除插件包以及一些其他设置请在 `Roc-script.sh` 文件内修改。
-- 添加或修改 `xx.yml` 文件，最后点击 `Actions` 运行要编译的 `workflow` 即可开始编译。
-- 编译大概需要 1-2 小时，编译完成后在仓库主页 [Releases](https://github.com/laipeng668/openwrt-ci-roc/releases) 对应 Tag 标签内下载固件。
+## 🔑 默认配置
+
+| 项目 | 内容 |
+| :--- | :--- |
+| **管理地址** | `192.168.2.1` |
+| **默认用户** | `root` |
+| **默认密码** | `none` |
+| **主机名称** | `LibWrt` |
+
+## 📦 定制固件说明
+
+1. **Fork 本项目**：首先登录 GitHub 账号，将本项目 Fork 到你自己的仓库。
+2. **插件调整**：修改 `configs/` 目录下对应的 `.config` 文件。注意：不需要的包请将 `y` 改为 `n`（仅加 `#` 注释无效）。
+3. **脚本定制**：在 `Roc-script.sh` 中修改默认 IP、主机名、添加第三方插件包（如 `HomeProxy`、`Argon` 等）。
+4. **触发编译**：点击 `Actions` 页面，选择对应的 `workflow` 并点击 `Run workflow`。
+5. **获取成品**：编译完成后，在 [Releases](https://github.com/laipeng668/openwrt-ci-roc/releases) 页面下载对应的固件包。
+
+## 🖇️ 鸣谢与参考
+
+- **源码上游**：[ImmortalWrt](https://github.com/immortalwrt/immortalwrt) | [SagerNet](https://github.com/SagerNet/sing-box)
+- **技术社区**：[恩山无线论坛](https://www.right.com.cn/) | [OpenWrt 软件包全量解释](https://www.right.com.cn/FORUM/forum.php?mod=viewthread&tid=8384897)
+- **视频教程**：[参考教程](https://www.youtube.com/watch?v=6j4ofS0GT38)
