@@ -153,7 +153,7 @@ jobs:
         body: |
           **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
           ### 📒 固件信息
-          - 这是开启全功能NSS的6.12内核固件，默认主题为 Argon。包含 HomeProxy (Sing-box 核心) 支持 TUN 模式。已保留亚瑟/雅典娜驱动、USB 打印及磁盘管理
+          - 这是JDCloud 亚瑟与雅典那专用 IPQ60XX 开启全功能NSS的6.12内核固件，默认主题为 Argon。只包含 HomeProxy (Sing-box 核心) 支持 TUN 模式。已保留亚瑟/雅典娜驱动、USB 打印及磁盘管理
           - 💻 这是 ${{ env.FIRMWARE_TAG }} 平台使用的 OpenWrt 固件
           - ⚽ 固件源码: ${{ env.REPO_URL }}
           - 💝 源码分支: ${{ env.REPO_BRANCH }}
