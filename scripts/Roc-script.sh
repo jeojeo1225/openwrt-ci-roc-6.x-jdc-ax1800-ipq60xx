@@ -30,15 +30,14 @@ sed -i 's/reg = <0x0 0x4ab00000 0x0 0x[0-9a-f]\+>/reg = <0x0 0x4ab00000 0x0 0x04
 rm -rf feeds/luci/applications/luci-app-argon-config
 rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/applications/luci-app-homeproxy
-rm -rf feeds/packages/net/sing-box
+
 rm -rf feeds/packages/lang/golang
 # 2. 克隆 Argon 主题与配置 (必须加回这两行)
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/luci/themes/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config
 
-# 3. 修正：强制清理并拉取 Sing-box 和 Golang 源码
+# 3. 修正：强制清理并拉取Golang 源码
 # 直接克隆到 feeds 目录下，这是最稳妥的路径
-git clone --depth=1 https://github.com/sagernet/openwrt-sing-box feeds/packages/net/sing-box
 git clone --depth=1 https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
 # 针对 HomeProxy，建议也同步克隆到 package 目录下，确保优先级最高
 rm -rf package/homeproxy
