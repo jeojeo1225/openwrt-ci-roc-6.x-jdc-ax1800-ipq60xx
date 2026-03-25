@@ -42,7 +42,7 @@
 1. **Fork 本仓库**：修改 `configs/` 目录下的 `.config` 文件（`y` 为选定，`n` 为取消）。
 2. **脚本干预**：在 `Roc-script.sh` 中修改默认 IP 或添加你自己的个性化指令。
 3. **Actions 编译**：点击 `Actions` -> `Run workflow` 开始编译。
-4. **固件下载**：请前往 [Releases](https://github.com/laipeng668/openwrt-ci-roc/releases) 获取。
+4. **固件下载**：请前往 [Releases](https://github.com/jeojeo1225/openwrt-ci-roc-6.x-jdc-ax1800-ipq60xx/releases) 获取。
 
 ## 🖇️ 鸣谢
 - **上游源码**：[ImmortalWrt](https://github.com/immortalwrt/immortalwrt) | [SagerNet](https://github.com/SagerNet/sing-box)
