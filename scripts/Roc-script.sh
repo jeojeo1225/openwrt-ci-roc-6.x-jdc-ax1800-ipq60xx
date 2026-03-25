@@ -35,13 +35,15 @@ rm -rf feeds/packages/lang/golang
 # 2. 克隆 Argon 主题与配置 (必须加回这两行)
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon feeds/luci/themes/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config
-# 3. 克隆 HomeProxy与SINGBOX 源码,建议也补上最新的 golang 环境
-git clone --depth=1 https://github.com/immortalwrt/homeproxy package/homeproxy
-# 修正后的（强制放回 feeds 目录，并确保目录存在）
-mkdir -p feeds/packages/net/sing-box
+
+# 3. 修正：强制清理并拉取 Sing-box 和 Golang 源码
+# 直接克隆到 feeds 目录下，这是最稳妥的路径
 git clone --depth=1 https://github.com/sagernet/openwrt-sing-box feeds/packages/net/sing-box
-mkdir -p feeds/packages/lang/golang
 git clone --depth=1 https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+# 针对 HomeProxy，建议也同步克隆到 package 目录下，确保优先级最高
+rm -rf package/homeproxy
+git clone --depth=1 https://github.com/immortalwrt/homeproxy package/homeproxy
+
 # 4. 雅典娜LED控制
 git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led
 chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
