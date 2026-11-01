@@ -79,7 +79,7 @@ if [ -f "$JS_FILE" ] && grep -Eq 'Built by Roc [0-9]{4}-[0-9]{2}-[0-9]{2}' "$JS_
 else
     replace_checked \
         "$JS_FILE" "_\\('Firmware Version'\\)," "Built by Roc $BUILD_DATE" \
-        "s#_('Firmware Version'), (L\\.isObject(boardinfo\\.release) ? boardinfo\\.release\\.description + ' / ' : '') + (luciversion || ''),#_('Firmware Version'), (L.isObject(boardinfo.release) ? boardinfo.release.description + ' / ' : '') + (luciversion || '') + ' / ' + E('a', { href: 'https://github.com/jeojeo1225/openwrt-ci-roc-6.x-jdc-ax1800-ipq60xx/releases', target: '_blank', rel: 'noopener noreferrer' }, [ 'Built by Roc $BUILD_DATE' ]),#"
+        "s#_[(]'Firmware Version'[)],.*luciversion.*[,]#_('Firmware Version'), (L.isObject(boardinfo.release) ? boardinfo.release.description + ' / ' : '') + (luciversion || '') + ' / ' + E('a', { href: 'https://github.com/jeojeo1225/openwrt-ci-roc-6.x-jdc-ax1800-ipq60xx/releases', target: '_blank', rel: 'noopener noreferrer' }, [ 'Built by Roc $BUILD_DATE' ]),#"
 fi
 
 # --- 闪存优化：增加文件存在性检查 ---
