@@ -163,14 +163,19 @@ set_sysctl net.core.netdev_max_backlog 10000
 set_sysctl kernel.printk '0 0 0 0'
 
 # 6. 日志精简 (防止 eMMC 损耗)
-replace_checked \
-    package/base-files/files/etc/config/system \
-    'option log_type.*' 'option log_type "circular"' \
-    's/option log_type.*/option log_type "circular"/'
-replace_checked \
-    package/base-files/files/etc/config/system \
-    'option log_size.*' 'option log_size "64"' \
-    's/option log_size.*/option log_size "64"/'
+SYSTEM_CONFIG="package/base-files/files/etc/config/system"
+if [ -f "$SYSTEM_CONFIG" ]; then
+    replace_checked \
+        "$SYSTEM_CONFIG" \
+        'option log_type.*' 'option log_type "circular"' \
+        's/option log_type.*/option log_type "circular"/'
+    replace_checked \
+        "$SYSTEM_CONFIG" \
+        'option log_size.*' 'option log_size "64"' \
+        's/option log_size.*/option log_size "64"/'
+else
+    printf 'Skipping optional log settings; source does not provide %s\n' "$SYSTEM_CONFIG" >&2
+fi
 # 7. 强制 CPU Performance 模式 (如果配置文件存在)
 if [ -f "package/base-files/files/etc/cgit add .github/workflows/JDCloud-ImmortalWrt.yml README.md configs/JDCloud.config scripts/Roc-script.sh
 git diff --cached --check

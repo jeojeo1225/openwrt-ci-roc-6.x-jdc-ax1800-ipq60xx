@@ -18,7 +18,7 @@
 - **NSS 驱动内存预留**：将 `q6_region` 设为 **64MB**（512MB 内存配置的源码默认值约为 55MB）。增加的预留会减少系统可用内存，实际吞吐表现需在设备上测试。
 - **CPU 调频设置**：若上游源码存在 `cpufreq` 配置文件，编译脚本会尝试将 governor 设为 `performance`；若文件不存在则跳过，运行时状态需在设备上确认。
 - **内存回收加速**：系统启动时尝试启用 `LRU_GEN` (多代最近最少使用)；实际是否生效取决于内核支持情况。
-- **闪存寿命保护**：通过 `remount,noatime` 挂载参数减少 eMMC 读写；将系统日志限制为 **64KB** 循环存储。
+- **闪存与日志设置**：启动时尝试以 `noatime` 重新挂载根分区；若源码提供 `etc/config/system`，脚本会将日志设为 **64KB** 循环模式，否则会提示跳过该可选设置。
 
 ### 2.2 定制插件与编译组件
 - **HomeProxy**：集成 [HomeProxy](https://github.com/immortalwrt/homeproxy/tree/fadaa676104f59ff6ace480a780a258d846d0aec) 代理管理插件，使用 [SagerNet sing-box](https://github.com/SagerNet/sing-box) 核心。
