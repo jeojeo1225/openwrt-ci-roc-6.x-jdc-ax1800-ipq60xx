@@ -9,6 +9,7 @@ on:
 env:
   REPO_URL: https://github.com/LiBwrt/LibWrt.git
   REPO_BRANCH: 25.12-nss
+  REPO_COMMIT: 96a0ec8a427909c4d9ef112641b36bcc0728fa43
   CONFIG_FILE: configs/JDCloud.config
 
   DIY_SCRIPT: scripts/Roc-script.sh
@@ -52,7 +53,11 @@ jobs:
         df -hT $GITHUB_WORKSPACE
         sudo mkdir -p /mnt/openwrt
         sudo chown -R $(id -u):$(id -g) /mnt/openwrt
-        git clone --depth 1 -b $REPO_BRANCH --single-branch $REPO_URL /mnt/openwrt
+        git init --quiet /mnt/openwrt
+        git -C /mnt/openwrt remote add origin "$REPO_URL"
+        git -C /mnt/openwrt fetch --depth=1 origin "$REPO_COMMIT"
+        git -C /mnt/openwrt checkout --quiet --detach FETCH_HEAD
+        test "$(git -C /mnt/openwrt rev-parse HEAD)" = "$REPO_COMMIT"
         cd /mnt/openwrt
         echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
         VERSION_INFO=$(git show -s --date=short --format="作者: %an<br/>时间: %cd<br/>内容: %s<br/>hash: %H")
