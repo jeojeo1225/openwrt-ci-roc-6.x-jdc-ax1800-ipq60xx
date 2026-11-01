@@ -6,7 +6,7 @@ sed -i "s/hostname='.*'/hostname='LibWrt'/g" package/base-files/files/bin/config
 JS_FILE="feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
 if [ -f "$JS_FILE" ]; then
     # 这里的正则匹配更精准，且使用了单行替换防止 Actions 报错
-    sed -i "s#_('Firmware Version'), (L\.isObject(boardinfo\.release) ? boardinfo\.release\.description + ' / ' : '') + (luciversion || ''),#_('Firmware Version'), (L.isObject(boardinfo.release) ? boardinfo.release.description + ' / ' : '') + (luciversion || '') + ' / ' + E('a', { href: 'https://github.com/laipeng668/openwrt-ci-roc/releases', target: '_blank', rel: 'noopener noreferrer' }, [ 'Built by Roc $(date "+%Y-%m-%d")' ]),#" "$JS_FILE"
+    sed -i "s#_('Firmware Version'), (L\.isObject(boardinfo\.release) ? boardinfo\.release\.description + ' / ' : '') + (luciversion || ''),#_('Firmware Version'), (L.isObject(boardinfo.release) ? boardinfo.release.description + ' / ' : '') + (luciversion || '') + ' / ' + E('a', { href: 'https://github.com/jeojeo1225/openwrt-ci-roc-6.x-jdc-ax1800-ipq60xx/releases', target: '_blank', rel: 'noopener noreferrer' }, [ 'Built by Roc $(date "+%Y-%m-%d")' ]),#" "$JS_FILE"
 fi
 # --- 闪存优化：增加文件存在性检查 ---
 RC_LOCAL="package/base-files/files/etc/rc.local"
