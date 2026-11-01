@@ -177,10 +177,7 @@ else
     printf 'Skipping optional log settings; source does not provide %s\n' "$SYSTEM_CONFIG" >&2
 fi
 # 7. 强制 CPU Performance 模式 (如果配置文件存在)
-if [ -f "package/base-files/files/etc/cgit add .github/workflows/JDCloud-ImmortalWrt.yml README.md configs/JDCloud.config scripts/Roc-script.sh
-git diff --cached --check
-git commit -m "Update router firmware build configuration"
-git push origin masteronfig/cpufreq" ]; then
+if [[ -f package/base-files/files/etc/config/cpufreq ]]; then
     replace_checked \
         package/base-files/files/etc/config/cpufreq \
         "option governor[[:space:]]+('[^']*'|\"[^\"]*\")" "option governor[[:space:]]+'performance'" \
