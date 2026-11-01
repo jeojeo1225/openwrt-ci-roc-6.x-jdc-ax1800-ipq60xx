@@ -23,7 +23,6 @@
 ### 2.2 定制插件与编译组件
 - **HomeProxy**：集成 [HomeProxy](https://github.com/immortalwrt/homeproxy/tree/fadaa676104f59ff6ace480a780a258d846d0aec) 代理管理插件，使用 [SagerNet sing-box](https://github.com/SagerNet/sing-box) 核心。
 - **Argon Theme**：集成 [jerrykuku Argon 主题](https://github.com/jerrykuku/luci-theme-argon/tree/517971b773991541ecb5e118b0c5d0b609a79e06) 及 [配置插件](https://github.com/jerrykuku/luci-app-argon-config/tree/9f096c916c16be8075610dd137d3b18982f81f1e) `luci-app-argon-config`。
-- **雅典娜 LED 控制**：集成 [`luci-app-athena-led`](https://github.com/NONGFAH/luci-app-athena-led/tree/f8eeb3119008ac0e429fc642c125512f9253ec1b)；仅京东云 `re-cs-02` 配置安装，`re-ss-01` 不安装。
 - **Go 编译环境**：使用 [`Golang 1.23+`](https://github.com/sbwml/packages_lang_golang/tree/cd8953c31e0f64ea2853f87bb0f32256646a160d) 编译链，为固件中的 Go 语言包提供构建环境。
 
 ### 2.3 其他已选配置
@@ -51,4 +50,4 @@
 
 ## 5. 鸣谢
 - **上游源码**：[ImmortalWrt](https://github.com/immortalwrt/immortalwrt)、[LiBwrt](https://github.com/LiBwrt/LibWrt/tree/96a0ec8a427909c4d9ef112641b36bcc0728fa43)。
-- **核心组件**：[SagerNet](https://github.com/SagerNet/sing-box)、[sbwml](https://github.com/sbwml/packages_lang_golang/tree/cd8953c31e0f64ea2853f87bb0f32256646a160d)（Go）、[jerrykuku](https://github.com/jerrykuku)（Argon）、[NONGFAH](https://github.com/NONGFAH/luci-app-athena-led/tree/f8eeb3119008ac0e429fc64c125512f9253ec1b)（Athena LED）。
+- **核心组件**：[SagerNet](https://github.com/SagerNet/sing-box)、[sbwml](https://github.com/sbwml/packages_lang_golang/tree/cd8953c31e0f64ea2853f87bb0f32256646a160d)（Go）、[jerrykuku](https://github.com/jerrykuku)（Argon）。

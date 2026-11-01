@@ -129,10 +129,6 @@ fetch_source https://github.com/sbwml/packages_lang_golang feeds/packages/lang/g
 # 针对 HomeProxy，建议也同步克隆到 package 目录下，确保优先级最高
 fetch_source https://github.com/immortalwrt/homeproxy package/homeproxy Makefile fadaa676104f59ff6ace480a780a258d846d0aec
 
-# 4. 雅典娜LED控制
-fetch_source https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led Makefile f8eeb3119008ac0e429fc642c125512f9253ec1b
-chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
-
 set_sysctl() {
     local key="$1"
     local value="$2"
