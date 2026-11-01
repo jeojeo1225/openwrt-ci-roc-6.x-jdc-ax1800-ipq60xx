@@ -127,7 +127,7 @@ fetch_source https://github.com/jerrykuku/luci-app-argon-config feeds/luci/appli
 # 直接克隆到 feeds 目录下，这是最稳妥的路径
 fetch_source https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang golang/Makefile cd8953c31e0f64ea2853f87bb0f32256646a160d
 # 针对 HomeProxy，建议也同步克隆到 package 目录下，确保优先级最高
-fetch_source https://github.com/immortalwrt/homeproxy package/homeproxy Makefile fada676104f59ff6ace480a780a258d846d0aec
+fetch_source https://github.com/immortalwrt/homeproxy package/homeproxy Makefile fadaa676104f59ff6ace480a780a258d846d0aec
 
 # 4. 雅典娜LED控制
 fetch_source https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led Makefile f8eeb3119008ac0e429fc642c125512f9253ec1b
