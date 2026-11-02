@@ -28,6 +28,7 @@
 - **Athena LED**：集成 [Athena LED LuCI 插件](https://github.com/NONGFAH/luci-app-athena-led/tree/main)，跟随 `main` 分支最新提交；仅安装到 RE-CS-02。
 - **Feeds**：每次构建先更新已配置的 feeds，使用各 feed 配置分支的最新提交。
 - **版本追溯**：每次编译自动跟踪最新分支内容；Release 记录主源码、feeds 和以上自定义仓库该次构建解析出的实际提交。
+- **Release 发布**：每次编译运行单独创建一个 Release；同一次编译生成的 `.bin` 固件统一放在该 Release 中，重跑会按运行尝试编号创建独立 Release。
 
 ### 2.3 已选择的 LuCI 插件
 以下插件在 [`configs/JDCloud.config`](configs/JDCloud.config) 中启用；最终是否进入固件还取决于对应源码/feed 中包是否可用，以及构建是否成功。

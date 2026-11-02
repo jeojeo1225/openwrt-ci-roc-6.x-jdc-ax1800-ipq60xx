@@ -159,9 +159,9 @@ jobs:
       if: steps.compile.outputs.status == 'success'
       uses: ncipollo/release-action@main
       with:
-        name: "${{ env.FIRMWARE_TAG }} - ${{ env.FILE_DATE }} (Build #${{ github.run_number }})"
+        name: "${{ env.FIRMWARE_TAG }} - ${{ env.FILE_DATE }} (Build #${{ github.run_number }}, attempt ${{ github.run_attempt }})"
         allowUpdates: false
-        tag: JDCloud-${{ env.FILE_DATE }}-${{ github.run_number }}
+        tag: JDCloud-${{ env.FILE_DATE }}-${{ github.run_number }}-${{ github.run_attempt }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE_PATH }}/*
         body: |
@@ -184,6 +184,7 @@ jobs:
           | --- | --- |
           | 构建时间 | ${{ env.DATE }} |
           | 构建编号 | #${{ github.run_number }} |
+          | 运行尝试 | ${{ github.run_attempt }} |
           | 目标平台 | `${{ env.DEVICE_TARGET }}/${{ env.DEVICE_SUBTARGET }}` |
           | 内核版本 | ${{ env.VERSION_KERNEL }} |
           | 固件源码 | [LiBwrt](${{ env.REPO_URL }}) |
