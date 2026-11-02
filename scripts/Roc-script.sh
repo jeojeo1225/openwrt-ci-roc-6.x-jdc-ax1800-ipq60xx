@@ -5,34 +5,34 @@ fetch_source() {
     local url="$1"
     local destination="$2"
     local marker="$3"
-    local commit="$4"
+    local ref="$4"
+    local env_name="$5"
     local actual_commit
 
-    if [[ ! "$commit" =~ ^[0-9a-f]{40}$ ]]; then
-        printf 'Invalid commit SHA for %s: %s\n' "$url" "$commit" >&2
+    if [[ ! "$env_name" =~ ^[A-Z][A-Z0-9_]*$ ]]; then
+        printf 'Invalid environment variable name for %s: %s\n' "$url" "$env_name" >&2
         return 1
     fi
 
-    printf 'Fetching %s at %s into %s\n' "$url" "$commit" "$destination"
+    printf 'Fetching latest %s from %s into %s\n' "$ref" "$url" "$destination"
     rm -rf "$destination"
     git init --quiet "$destination"
     git -C "$destination" remote add origin "$url"
-    if ! git -C "$destination" fetch --depth=1 origin "$commit"; then
-        printf 'Failed to fetch %s at %s\n' "$url" "$commit" >&2
+    if ! git -C "$destination" fetch --depth=1 origin "$ref"; then
+        printf 'Failed to fetch %s from %s\n' "$ref" "$url" >&2
         return 1
     fi
     git -C "$destination" checkout --quiet --detach FETCH_HEAD
 
     actual_commit="$(git -C "$destination" rev-parse HEAD)"
-    if [[ "$actual_commit" != "$commit" ]]; then
-        printf 'Commit mismatch for %s: expected %s, got %s\n' "$url" "$commit" "$actual_commit" >&2
-        return 1
-    fi
 
     if [ ! -f "$destination/$marker" ]; then
         printf 'Source %s is missing expected file: %s\n' "$url" "$marker" >&2
         return 1
     fi
+
+    printf 'Resolved %s to %s\n' "$url" "$actual_commit"
+    printf '%s=%s\n' "$env_name" "$actual_commit" >> "$GITHUB_ENV"
 }
 
 replace_checked() {
@@ -119,15 +119,17 @@ replace_checked \
 # 1. 移除旧包（确保清理干净）
 rm -rf feeds/luci/applications/luci-app-homeproxy
 
-# 2. 克隆 Argon 主题与配置 (必须加回这两行)
-fetch_source https://github.com/jerrykuku/luci-theme-argon feeds/luci/themes/luci-theme-argon Makefile 517971b773991541ecb5e118b0c5d0b609a79e06
-fetch_source https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config Makefile 9f096c916c16be8075610dd137d3b18982f81f1e
+# 2. Track the latest upstream branches for Argon theme and configuration.
+fetch_source https://github.com/jerrykuku/luci-theme-argon feeds/luci/themes/luci-theme-argon Makefile master ARGON_THEME_COMMIT
+fetch_source https://github.com/jerrykuku/luci-app-argon-config feeds/luci/applications/luci-app-argon-config Makefile master ARGON_CONFIG_COMMIT
 
-# 3. 修正：强制清理并拉取Golang 源码
-# 直接克隆到 feeds 目录下，这是最稳妥的路径
-fetch_source https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang golang/Makefile cd8953c31e0f64ea2853f87bb0f32256646a160d
-# 针对 HomeProxy，建议也同步克隆到 package 目录下，确保优先级最高
-fetch_source https://github.com/immortalwrt/homeproxy package/homeproxy Makefile fadaa676104f59ff6ace480a780a258d846d0aec
+# 3. Track the latest package sources on their maintained upstream branches.
+fetch_source https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang golang/Makefile 27.x GOLANG_COMMIT
+fetch_source https://github.com/immortalwrt/homeproxy package/homeproxy Makefile master HOMEPROXY_COMMIT
+
+# Athena LED LuCI app, tracked on main and installed only on RE-CS-02.
+fetch_source https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led Makefile main ATHENA_LED_COMMIT
+chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
 
 set_sysctl() {
     local key="$1"

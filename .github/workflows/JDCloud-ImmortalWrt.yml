@@ -9,7 +9,6 @@ on:
 env:
   REPO_URL: https://github.com/LiBwrt/LibWrt.git
   REPO_BRANCH: 25.12-nss
-  REPO_COMMIT: 96a0ec8a427909c4d9ef112641b36bcc0728fa43
   CONFIG_FILE: configs/JDCloud.config
 
   DIY_SCRIPT: scripts/Roc-script.sh
@@ -55,11 +54,11 @@ jobs:
         sudo chown -R $(id -u):$(id -g) /mnt/openwrt
         git init --quiet /mnt/openwrt
         git -C /mnt/openwrt remote add origin "$REPO_URL"
-        git -C /mnt/openwrt fetch --depth=1 origin "$REPO_COMMIT"
+        git -C /mnt/openwrt fetch --depth=1 origin "$REPO_BRANCH"
         git -C /mnt/openwrt checkout --quiet --detach FETCH_HEAD
-        test "$(git -C /mnt/openwrt rev-parse HEAD)" = "$REPO_COMMIT"
         cd /mnt/openwrt
         echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+        echo "REPO_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
         VERSION_INFO=$(git show -s --date=short --format="作者: %an<br/>时间: %cd<br/>内容: %s<br/>hash: %H")
         echo "VERSION_INFO=$VERSION_INFO" >> $GITHUB_ENV
         VERSION_KERNEL=$(grep -oP 'LINUX_KERNEL_HASH-\K[0-9]+\.[0-9]+\.[0-9]+' target/linux/generic/kernel-6.12)
@@ -103,6 +102,16 @@ jobs:
         cd $OPENWRT_PATH
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        FEEDS_VERSION="$(for feed_dir in feeds/*; do
+          if git -C "$feed_dir" rev-parse --verify HEAD >/dev/null 2>&1; then
+            printf '%s@%s;' "${feed_dir#feeds/}" "$(git -C "$feed_dir" rev-parse HEAD)"
+          fi
+        done)"
+        if [ -z "$FEEDS_VERSION" ]; then
+          echo "No feed revisions found after updating feeds" >&2
+          exit 1
+        fi
+        echo "FEEDS_VERSION=$FEEDS_VERSION" >> $GITHUB_ENV
   
     - name: Load Custom Configuration(加载自定义配置)
       run: |
@@ -167,6 +176,7 @@ jobs:
           - **代理功能：** HomeProxy（Sing-box），支持 TUN 模式
           - **管理界面：** LuCI Argon 主题
           - **系统工具：** USB 打印与磁盘管理
+          - **设备专属功能：** Athena LED 屏幕控制（仅 RE-CS-02）
           - **系统优化：** ZRAM、TCP BBR、irqbalance 与 LTO
 
           ### 固件信息
@@ -186,6 +196,15 @@ jobs:
 
           ### 上游源码记录
           ${{ env.VERSION_INFO }}
+
+          ### 依赖源码版本
+          - LiBwrt：[`25.12-nss`](${{ env.REPO_URL }}/commit/${{ env.REPO_COMMIT }}) (`${{ env.REPO_COMMIT }}`)
+          - LuCI feeds：`${{ env.FEEDS_VERSION }}`
+          - Argon 主题：[`jerrykuku/luci-theme-argon`](https://github.com/jerrykuku/luci-theme-argon/commit/${{ env.ARGON_THEME_COMMIT }}) (`${{ env.ARGON_THEME_COMMIT }}`)
+          - Argon 配置：[`jerrykuku/luci-app-argon-config`](https://github.com/jerrykuku/luci-app-argon-config/commit/${{ env.ARGON_CONFIG_COMMIT }}) (`${{ env.ARGON_CONFIG_COMMIT }}`)
+          - Golang：[`sbwml/packages_lang_golang`](https://github.com/sbwml/packages_lang_golang/commit/${{ env.GOLANG_COMMIT }}) (`${{ env.GOLANG_COMMIT }}`)
+          - HomeProxy：[`immortalwrt/homeproxy`](https://github.com/immortalwrt/homeproxy/commit/${{ env.HOMEPROXY_COMMIT }}) (`${{ env.HOMEPROXY_COMMIT }}`)
+          - Athena LED：[`NONGFAH/luci-app-athena-led`](https://github.com/NONGFAH/luci-app-athena-led/commit/${{ env.ATHENA_LED_COMMIT }}) (`${{ env.ATHENA_LED_COMMIT }}`)
 
     - name: Delete Old Cache(删除旧缓存)
       run: |
