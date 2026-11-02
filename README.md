@@ -25,12 +25,23 @@
 - **Argon Theme**：集成 [jerrykuku Argon 主题](https://github.com/jerrykuku/luci-theme-argon/tree/517971b773991541ecb5e118b0c5d0b609a79e06) 及 [配置插件](https://github.com/jerrykuku/luci-app-argon-config/tree/9f096c916c16be8075610dd137d3b18982f81f1e) `luci-app-argon-config`。
 - **Go 编译环境**：使用 [`Golang 1.23+`](https://github.com/sbwml/packages_lang_golang/tree/cd8953c31e0f64ea2853f87bb0f32256646a160d) 编译链，为固件中的 Go 语言包提供构建环境。
 
-### 2.3 其他已选配置
-- **内存与编译优化**：启用 `ZRAM` swap，默认压缩算法为 `LZ4`；启用 `LTO` 和针对 `Cortex-A53` 的编译优化选项。
-- **网络功能**：选择 `TCP BBR`、`irqbalance`，以及 QCA NSS 驱动和 `ECM` 等相关模块。
-- **维护工具**：包含 `htop`、磁盘分区与维护工具、`fstrim`、`nano`、`hdparm` 和 `smartmontools` 等。
+### 2.3 已选择的 LuCI 插件
+以下插件在 [`configs/JDCloud.config`](configs/JDCloud.config) 中启用；最终是否进入固件还取决于对应源码/feed 中包是否可用，以及构建是否成功。
 
-### 2.4 精简与移除
+- **主题与系统管理**：Argon 主题、Argon 配置、CPU 调频、TTYD 终端、uHTTPd 管理、UPnP。
+- **网络与访问控制**：HomeProxy（含简体中文翻译）、ARP 绑定。
+- **存储与外设**：DiskMan 磁盘管理、USB 打印。
+
+对应的 LuCI 包为：`luci-theme-argon`、`luci-app-argon-config`、`luci-app-cpufreq`、`luci-app-ttyd`、`luci-app-upnp`、`luci-app-uhttpd`、`luci-app-diskman`、`luci-app-arpbind`、`luci-app-usb-printer`、`luci-app-homeproxy` 和 `luci-i18n-homeproxy-zh-cn`。
+
+### 2.4 其他已选软件包与功能
+- **代理核心与网络依赖**：`sing-box`（启用 QUIC、ECH、TUIC、gRPC、TProxy 功能）、TUN、nftables TProxy/socket、`ip-full`、`dnsmasq-full`、CA 证书和 `libcap-bin`。
+- **网络与硬件加速**：TCP BBR、`irqbalance`、QCA NSS 驱动与 ECM，以及 ath11k 无线驱动相关模块。
+- **内存与编译优化**：启用 ZRAM swap（默认压缩算法为 LZ4）、LTO 和针对 Cortex-A53 的编译优化选项。
+- **系统与维护工具**：`dmesg`、`htop`、`fdisk`、`cfdisk`、`sgdisk`、`tune2fs`、`fstrim`、`nano-full`、`hdparm`、`smartmontools-drivedb`、`coremark`、`openssh-sftp-server`、亚洲时区数据及 `autocore`。
+- **默认设置组件**：`default-settings` 和 `default-settings-chn`。
+
+### 2.5 精简与移除
 - **移除冗余组件**：剔除了上游自带的部分不常用 Luci 界面与过时的工具包。
 - **清理冲突配置**：在编译脚本中强制清理了可能与新版插件产生冲突的旧版 feeds。
 

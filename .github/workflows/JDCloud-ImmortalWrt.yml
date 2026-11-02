@@ -150,24 +150,42 @@ jobs:
       if: steps.compile.outputs.status == 'success'
       uses: ncipollo/release-action@main
       with:
-        name: ${{ env.DATE }} for ${{ env.FIRMWARE_TAG }}
-        allowUpdates: true
-        tag: ${{ env.FIRMWARE_TAG }}
+        name: "${{ env.FIRMWARE_TAG }} - ${{ env.FILE_DATE }} (Build #${{ github.run_number }})"
+        allowUpdates: false
+        tag: JDCloud-${{ env.FILE_DATE }}-${{ github.run_number }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE_PATH }}/*
         body: |
-          **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
-          ### 📒 固件信息
-          - 这是JDCloud 亚瑟与雅典那专用 IPQ60XX 开启全功能NSS的6.12内核固件，默认主题为 Argon。只包含 HomeProxy (Sing-box 核心) 支持 TUN 模式。已保留亚瑟/雅典娜驱动、USB 打印及磁盘管理
-          - 💻 这是 ${{ env.FIRMWARE_TAG }} 平台使用的 OpenWrt 固件
-          - ⚽ 固件源码: ${{ env.REPO_URL }}
-          - 💝 源码分支: ${{ env.REPO_BRANCH }}
-          - 🌐 默认地址: **192.168.2.1**
-          - 🔑 默认密码: none
-          ### 🧊 固件版本
-          - 固件内核版本：**${{ env.VERSION_KERNEL }}**
-          - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
-          - ${{ env.VERSION_INFO }}
+          ## Release Notes
+
+          ### 概述
+          面向 JDCloud IPQ60xx 设备的定制固件，基于 LiBwrt 构建。以下为本固件包含的功能与构建信息；具体源码更新请参阅下方上游提交记录。
+
+          ### 主要特性
+          - **设备支持：** JDCloud RE-SS-01（亚瑟）与 RE-CS-02（雅典娜）
+          - **网络加速：** 集成 QCA NSS / ECM 相关组件
+          - **代理功能：** HomeProxy（Sing-box），支持 TUN 模式
+          - **管理界面：** LuCI Argon 主题
+          - **系统工具：** USB 打印与磁盘管理
+          - **系统优化：** ZRAM、TCP BBR、irqbalance 与 LTO
+
+          ### 固件信息
+          | 项目 | 信息 |
+          | --- | --- |
+          | 构建时间 | ${{ env.DATE }} |
+          | 构建编号 | #${{ github.run_number }} |
+          | 目标平台 | `${{ env.DEVICE_TARGET }}/${{ env.DEVICE_SUBTARGET }}` |
+          | 内核版本 | ${{ env.VERSION_KERNEL }} |
+          | 固件源码 | [LiBwrt](${{ env.REPO_URL }}) |
+          | 源码分支 | `${{ env.REPO_BRANCH }}` |
+          | 默认管理地址 | `192.168.2.1` |
+          | 默认密码 | 无 |
+
+          ### 下载与安装
+          请从本页面的 **Assets** 下载与设备型号对应的 `.bin` 固件。刷机前请确认设备型号及固件类型，并备份配置；不同型号的固件不可混用。
+
+          ### 上游源码记录
+          ${{ env.VERSION_INFO }}
 
     - name: Delete Old Cache(删除旧缓存)
       run: |
