@@ -59,6 +59,47 @@ replace_checked() {
     fi
 }
 
+update_sing_box_latest() {
+    local makefile="${1:-feeds/packages/net/sing-box/Makefile}"
+    local tag
+    local version
+    local source_hash
+    local full_variant_tags="badlinkname,tfogo_checklinkname0,with_acme,with_clash_api,with_cloudflared,with_dhcp,with_gvisor,with_openconnect,with_openvpn,with_quic,with_tailscale,with_usbip,with_utls,with_wireguard"
+
+    if [ ! -f "$makefile" ]; then
+        printf 'Required sing-box package recipe not found: %s\n' "$makefile" >&2
+        return 1
+    fi
+
+    tag="$(curl --retry 3 --retry-all-errors -fsSL https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -er '.tag_name')"
+    if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        printf 'Unexpected latest sing-box release tag: %s\n' "$tag" >&2
+        return 1
+    fi
+
+    version="${tag#v}"
+    source_hash="$(curl --retry 3 --retry-all-errors -fsSL "https://codeload.github.com/SagerNet/sing-box/tar.gz/${tag}?" | sha256sum | awk '{print $1}')"
+    if [[ ! "$source_hash" =~ ^[0-9a-f]{64}$ ]] || ! grep -q '^PKG_VERSION:=' "$makefile" || ! grep -q '^PKG_HASH:=' "$makefile" || ! grep -q '^GO_PKG_BUILD_PKG:=' "$makefile" || ! grep -q '^[[:space:]]*GO_PKG_TAGS:=' "$makefile"; then
+        printf 'Invalid sing-box source hash or package recipe fields for %s\n' "$tag" >&2
+        return 1
+    fi
+
+    sed -i -E "s/^PKG_VERSION:=.*/PKG_VERSION:=$version/; s/^PKG_HASH:=.*/PKG_HASH:=$source_hash/" "$makefile"
+    if grep -q '^GO_PKG_LDFLAGS:=' "$makefile"; then
+        sed -i -E 's/^GO_PKG_LDFLAGS:=.*/GO_PKG_LDFLAGS:=-checklinkname=0/' "$makefile"
+    else
+        sed -i '/^GO_PKG_BUILD_PKG:=/a GO_PKG_LDFLAGS:=-checklinkname=0' "$makefile"
+    fi
+    sed -i -E "0,/^[[:space:]]*GO_PKG_TAGS:=/s|^[[:space:]]*GO_PKG_TAGS:=.*|  GO_PKG_TAGS:=$full_variant_tags|" "$makefile"
+    if ! grep -Fqx "PKG_VERSION:=$version" "$makefile" || ! grep -Fqx "PKG_HASH:=$source_hash" "$makefile" || ! grep -Fqx 'GO_PKG_LDFLAGS:=-checklinkname=0' "$makefile" || ! grep -Eq "^[[:space:]]*GO_PKG_TAGS:=$full_variant_tags$" "$makefile"; then
+        printf 'Failed to update sing-box package recipe to %s\n' "$version" >&2
+        return 1
+    fi
+
+    printf 'SINGBOX_VERSION=%s\n' "$version" >> "$GITHUB_ENV"
+    printf 'Using latest sing-box release %s (sha256 %s)\n' "$version" "$source_hash"
+}
+
 # 修改默认IP & 固件名称 & 编译署名和时间
 replace_checked \
     package/base-files/files/bin/config_generate \
@@ -130,6 +171,7 @@ fetch_source https://github.com/immortalwrt/homeproxy package/homeproxy Makefile
 # Athena LED LuCI app, tracked on main and installed only on RE-CS-02.
 fetch_source https://github.com/NONGFAH/luci-app-athena-led package/luci-app-athena-led Makefile main ATHENA_LED_COMMIT
 chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
+update_sing_box_latest
 
 set_sysctl() {
     local key="$1"

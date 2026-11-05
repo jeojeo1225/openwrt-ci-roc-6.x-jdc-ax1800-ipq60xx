@@ -22,7 +22,7 @@
 
 ### 2.2 定制插件与编译组件
 - **上游源码更新**：每次触发编译时，自动拉取 LiBwrt `25.12-nss` 分支和各组件指定上游分支的最新提交，并更新 feeds；各来源在该次 Release 中记录实际 commit，便于追溯。
-- **HomeProxy**：集成 [HomeProxy](https://github.com/immortalwrt/homeproxy/tree/master) 代理管理插件，跟随 `master` 分支最新提交，使用 [SagerNet sing-box](https://github.com/SagerNet/sing-box) 核心。
+- **HomeProxy**：集成 [HomeProxy](https://github.com/immortalwrt/homeproxy/tree/master) 代理管理插件，跟随 `master` 分支最新提交；构建时解析 SagerNet sing-box 最新稳定版并校验源码 SHA256。
 - **Argon Theme**：集成 [jerrykuku Argon 主题](https://github.com/jerrykuku/luci-theme-argon/tree/master) 及 [配置插件](https://github.com/jerrykuku/luci-app-argon-config/tree/master) `luci-app-argon-config`，跟随各自 `master` 分支最新提交。
 - **Go 编译环境**：使用 [`sbwml/packages_lang_golang`](https://github.com/sbwml/packages_lang_golang/tree/27.x) 的 `27.x` 分支最新编译链，为固件中的 Go 语言包提供构建环境。
 - **Athena LED**：集成 [Athena LED LuCI 插件](https://github.com/NONGFAH/luci-app-athena-led/tree/main)，跟随 `main` 分支最新提交；仅安装到 RE-CS-02。
@@ -33,18 +33,17 @@
 ### 2.3 已选择的 LuCI 插件
 以下插件在 [`configs/JDCloud.config`](configs/JDCloud.config) 中启用；最终是否进入固件还取决于对应源码/feed 中包是否可用，以及构建是否成功。
 
-- **主题与系统管理**：Argon 主题、Argon 配置、CPU 调频、TTYD 终端、uHTTPd 管理、UPnP。
-- **网络与访问控制**：HomeProxy（含简体中文翻译）、ARP 绑定。
-- **存储与外设**：DiskMan 磁盘管理、USB 打印。
+- **主题与系统功能**：Argon 主题、Argon 配置、UPnP、ARP 绑定、USB 打印。
+- **网络代理**：HomeProxy（含简体中文翻译）、最新稳定版 sing-box、TUN。
 - **设备专属功能**：仅 RE-CS-02（雅典娜）包含 Athena LED 屏幕控制插件；RE-SS-01（亚瑟）不包含。
 
-对应的 LuCI 包为：`luci-theme-argon`、`luci-app-argon-config`、`luci-app-cpufreq`、`luci-app-ttyd`、`luci-app-upnp`、`luci-app-uhttpd`、`luci-app-diskman`、`luci-app-arpbind`、`luci-app-usb-printer`、`luci-app-homeproxy` 和 `luci-i18n-homeproxy-zh-cn`。Athena LED 对应 `luci-app-athena-led` 与 `luci-i18n-athena-led-zh-cn`，仅随 RE-CS-02 固件安装。
+对应的 LuCI 包为：`luci-theme-argon`、`luci-app-argon-config`、`luci-app-upnp`、`luci-app-arpbind`、`luci-app-usb-printer`、`luci-app-homeproxy` 和 `luci-i18n-homeproxy-zh-cn`。Athena LED 对应 `luci-app-athena-led` 与 `luci-i18n-athena-led-zh-cn`，仅随 RE-CS-02 固件安装。Web 管理由 `uhttpd` 与 `uhttpd-mod-ubus` 提供，不依赖可选配置界面 `luci-app-uhttpd`。
 
 ### 2.4 其他已选软件包与功能
-- **代理核心与网络依赖**：`sing-box`（启用 QUIC、ECH、TUIC、gRPC、TProxy 功能）、TUN、nftables TProxy/socket、`ip-full`、`dnsmasq-full`、CA 证书和 `libcap-bin`。
+- **代理核心与网络依赖**：sing-box full variant（包含 TUN 支持，配合 `kmod-tun`）、nftables TProxy/socket、`ip-full`、`dnsmasq-full`、CA 证书和 `libcap-bin`。QUIC 等构建标签由当前 package recipe 决定。
 - **网络与硬件加速**：TCP BBR、`irqbalance`、QCA NSS 驱动与 ECM，以及 ath11k 无线驱动相关模块。
 - **内存与编译优化**：启用 ZRAM swap（默认压缩算法为 LZ4）、LTO 和针对 Cortex-A53 的编译优化选项。
-- **系统与维护工具**：`dmesg`、`htop`、`fdisk`、`cfdisk`、`sgdisk`、`tune2fs`、`fstrim`、`nano-full`、`hdparm`、`smartmontools-drivedb`、`coremark`、`openssh-sftp-server`、亚洲时区数据及 `autocore`。
+- **系统与维护工具**：保留可用于内置 eMMC 分区/文件系统维护的 `fdisk`、`cfdisk`、`sgdisk`、`tune2fs` 与 `fstrim`，以及亚洲时区数据。
 - **默认设置组件**：`default-settings` 和 `default-settings-chn`。
 
 ### 2.5 精简与移除

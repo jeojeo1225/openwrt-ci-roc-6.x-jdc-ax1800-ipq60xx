@@ -189,6 +189,7 @@ jobs:
           | 内核版本 | ${{ env.VERSION_KERNEL }} |
           | 固件源码 | [LiBwrt](${{ env.REPO_URL }}) |
           | 源码分支 | `${{ env.REPO_BRANCH }}` |
+          | sing-box 版本 | `${{ env.SINGBOX_VERSION }}` |
           | 默认管理地址 | `192.168.2.1` |
           | 默认密码 | 无 |
 
