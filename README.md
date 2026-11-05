@@ -34,17 +34,17 @@
 以下插件在 [`configs/JDCloud.config`](configs/JDCloud.config) 中启用；最终是否进入固件还取决于对应源码/feed 中包是否可用，以及构建是否成功。
 
 - **主题与系统功能**：Argon 主题、Argon 配置、UPnP、ARP 绑定、USB 打印。
-- **网络代理**：HomeProxy（含简体中文翻译）、最新稳定版 sing-box、TUN。
+- **网络代理**：HomeProxy、最新稳定版 sing-box、TUN。
 - **设备专属功能**：仅 RE-CS-02（雅典娜）包含 Athena LED 屏幕控制插件；RE-SS-01（亚瑟）不包含。
 
-对应的 LuCI 包为：`luci-theme-argon`、`luci-app-argon-config`、`luci-app-upnp`、`luci-app-arpbind`、`luci-app-usb-printer`、`luci-app-homeproxy` 和 `luci-i18n-homeproxy-zh-cn`。Athena LED 对应 `luci-app-athena-led` 与 `luci-i18n-athena-led-zh-cn`，仅随 RE-CS-02 固件安装。Web 管理由 `uhttpd` 与 `uhttpd-mod-ubus` 提供，不依赖可选配置界面 `luci-app-uhttpd`。
+对应的 LuCI 包为：`luci-theme-argon`、`luci-app-argon-config`、`luci-app-upnp`、`luci-app-arpbind`、`luci-app-usb-printer` 和 `luci-app-homeproxy`。Athena LED 的 `luci-app-athena-led` 仅随 RE-CS-02 固件安装。固件使用默认英文界面，不选择额外的中文语言包。Web 管理由 `uhttpd` 与 `uhttpd-mod-ubus` 提供，不依赖可选配置界面 `luci-app-uhttpd`。
 
 ### 2.4 其他已选软件包与功能
 - **代理核心与网络依赖**：sing-box full variant（包含 TUN 支持，配合 `kmod-tun`）、nftables TProxy/socket、`ip-full`、`dnsmasq-full`、CA 证书和 `libcap-bin`。QUIC 等构建标签由当前 package recipe 决定。
 - **网络与硬件加速**：TCP BBR、`irqbalance`、QCA NSS 驱动与 ECM，以及 ath11k 无线驱动相关模块。
 - **内存与编译优化**：启用 ZRAM swap（默认压缩算法为 LZ4）、LTO 和针对 Cortex-A53 的编译优化选项。
 - **系统与维护工具**：保留可用于内置 eMMC 分区/文件系统维护的 `fdisk`、`cfdisk`、`sgdisk`、`tune2fs` 与 `fstrim`，以及亚洲时区数据。
-- **默认设置组件**：`default-settings` 和 `default-settings-chn`。
+- **默认设置组件**：`default-settings`。
 
 ### 2.5 精简与移除
 - **移除冗余组件**：剔除了上游自带的部分不常用 Luci 界面与过时的工具包。
